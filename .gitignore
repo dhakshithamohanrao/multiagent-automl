@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+.env
+.ipynb_checkpoints/
+data/raw/
+data/planted_flaws/
+results/raw/
+*.pkl
+*.joblib

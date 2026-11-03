@@ -1,0 +1,31 @@
+seeds: [0, 1, 2]
+time_budget_s: 120          # per run, same for every system
+
+test_size: 0.2              # locked test set, split off first
+val_size: 0.2               # of the remaining data
+
+models: [logistic_regression, random_forest, xgboost, lightgbm]
+optuna_trials: 20
+
+limits:
+  lead_max_decisions: 4
+  critic_max_sendbacks: 3
+  code_max_retries: 2
+
+critic:                     # starting values, tuned on dev datasets in Phase 6
+  leakage_auc: 0.97
+  id_unique_ratio: 0.95
+  rare_class_ratio: 0.10
+  overfit_gap: 0.10
+
+llm:
+  name: TBD                 # chosen in Phase 3
+  temperature: 0
+
+paths:
+  raw: data/raw
+  processed: data/processed
+  planted_flaws: data/planted_flaws
+  results_raw: results/raw
+  results_tables: results/tables
+  results_figures: results/figures
