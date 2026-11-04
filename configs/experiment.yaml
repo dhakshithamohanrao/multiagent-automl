@@ -2,7 +2,7 @@ seeds: [0, 1, 2]
 time_budget_s: 120          # per run, same for every system
 
 test_size: 0.2              # locked test set, split off first
-val_size: 0.2               # of the remaining data
+val_size: 0.25               # of the remaining data
 
 models: [logistic_regression, random_forest, xgboost, lightgbm]
 optuna_trials: 20
