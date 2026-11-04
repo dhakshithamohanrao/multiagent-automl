@@ -1,0 +1,10 @@
+system,dataset,seed,best_model,val_score,test_score,score_drop,test_f1,test_balanced_accuracy,test_rare_class_recall
+plain_pipeline,credit-g,0,xgboost,0.8032,0.7539,0.0493,0.4954,0.6464,0.45
+plain_pipeline,credit-g,1,logistic_regression,0.7393,0.8139,-0.0746,0.6087,0.7202,0.5833
+plain_pipeline,credit-g,2,random_forest,0.7788,0.761,0.0178,0.4421,0.625,0.35
+plain_pipeline,diabetes,0,random_forest,0.8141,0.8669,-0.0528,0.6667,0.7463,0.5926
+plain_pipeline,diabetes,1,logistic_regression,0.8135,0.8143,-0.0007,0.6316,0.7228,0.5556
+plain_pipeline,diabetes,2,logistic_regression,0.843,0.7885,0.0544,0.587,0.695,0.5
+plain_pipeline,blood-transfusion,0,xgboost,0.7057,0.6153,0.0904,0.3871,0.6053,0.3333
+plain_pipeline,blood-transfusion,1,logistic_regression,0.7413,0.741,0.0004,0.1905,0.5468,0.1111
+plain_pipeline,blood-transfusion,2,logistic_regression,0.7452,0.7879,-0.0426,0.2727,0.5746,0.1667
