@@ -3,6 +3,7 @@ import yaml
 import json
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = _PROJECT_ROOT
 RESULTS_FILE = _PROJECT_ROOT / "results" / "raw" / "results.jsonl"
 
 RESULT_DEFAULTS = {
@@ -35,3 +36,9 @@ def finished_run_ids() -> set:
             if line.strip():
                 ids.add(json.loads(line)["run_id"])
     return ids
+
+def load_config(name: str = "experiment.yaml") -> dict:
+    """Load a YAML file from the configs/ folder."""
+    path = _PROJECT_ROOT / "configs" / name
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)

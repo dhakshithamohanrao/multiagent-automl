@@ -19,7 +19,8 @@ critic:                     # starting values, tuned on dev datasets in Phase 6
   overfit_gap: 0.10
 
 llm:
-  name: TBD                 # chosen in Phase 3
+  provider: gemini
+  model: gemini-3.5-flash
   temperature: 0
 
 paths:
