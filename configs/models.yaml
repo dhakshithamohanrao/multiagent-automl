@@ -1,0 +1,41 @@
+# configs/models.yaml
+# For each model: `fixed` params are always used, `search` params are tuned by Optuna.
+# Search entry: type (int or float), low, high, and log: true for a log scale.
+
+logistic_regression:
+  fixed:
+    max_iter: 2000
+  search:
+    C: {type: float, low: 0.001, high: 100.0, log: true}
+
+random_forest:
+  fixed:
+    n_jobs: -1
+  search:
+    n_estimators: {type: int, low: 100, high: 400}
+    max_depth: {type: int, low: 3, high: 20}
+    min_samples_leaf: {type: int, low: 1, high: 10}
+
+xgboost:
+  fixed:
+    eval_metric: logloss
+    tree_method: hist
+    verbosity: 0
+    n_jobs: -1
+  search:
+    n_estimators: {type: int, low: 100, high: 400}
+    max_depth: {type: int, low: 2, high: 8}
+    learning_rate: {type: float, low: 0.01, high: 0.3, log: true}
+    subsample: {type: float, low: 0.6, high: 1.0}
+    colsample_bytree: {type: float, low: 0.6, high: 1.0}
+
+lightgbm:
+  fixed:
+    verbose: -1
+    n_jobs: -1
+  search:
+    n_estimators: {type: int, low: 100, high: 400}
+    num_leaves: {type: int, low: 8, high: 64}
+    learning_rate: {type: float, low: 0.01, high: 0.3, log: true}
+    min_child_samples: {type: int, low: 5, high: 50}
+    subsample: {type: float, low: 0.6, high: 1.0}
