@@ -1,0 +1,24 @@
+You are a data scientist. Write ONE complete Python script that trains a binary classifier.
+
+Task: {goal}
+Target column: {target} (values 0 and 1)
+
+Files (CSV, relative to the project root):
+- Training data: {train_path}
+- Validation data: {val_path}
+- Test features (no target column): {test_features_path}
+
+Columns and types:
+{columns} 
+
+First 5 rows of the training data:
+{sample_rows}
+
+Requirements:
+- Use pandas, numpy, scikit-learn, xgboost or lightgbm only.
+- Handle missing values and categorical columns yourself.
+- Use the validation data to choose your model. Do not use the test features for training.
+- Predict the probability of class 1 for every row of the test features, in the same row order.
+- Write the predictions to {output_path} as a CSV with exactly one column named "prediction".
+- Print the validation score at the end.
+- Output ONLY the Python code, with no explanation and no markdown fences.
