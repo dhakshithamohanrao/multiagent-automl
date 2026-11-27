@@ -70,17 +70,24 @@ def suspicious_names(columns, target: str | None = None):
             flagged[col] = hit
     return bool(flagged), flagged
 
-def duplicate_overlap(train: pd.DataFrame, val: pd.DataFrame, max_share: float = 0.0):
-    """Share of validation rows that also appear in train (hash of every row)."""
+def duplicate_overlap(train: pd.DataFrame, val: pd.DataFrame,
+                      min_share: float = 0.05, ratio: float = 2.0):
+    """Share of validation rows that also appear in train (hash of every row).
+    Datasets can contain natural duplicates, so the share is compared with the
+    duplicate rate inside train itself. Flag only when the overlap clearly exceeds it."""
     cols = [c for c in train.columns if c in val.columns]
-    if not cols or len(val) == 0:
+    if not cols or len(val) == 0 or len(train) == 0:
         return False, {}
-    h_train = set(pd.util.hash_pandas_object(train[cols], index=False))
+    h_train_all = pd.util.hash_pandas_object(train[cols], index=False)
     h_val = pd.util.hash_pandas_object(val[cols], index=False)
-    n_overlap = int(h_val.isin(h_train).sum())
+    n_overlap = int(h_val.isin(set(h_train_all)).sum())
     share = n_overlap / len(val)
-    details = {"overlap_rows": n_overlap, "share_of_val": round(float(share), 4)}
-    return share > max_share, details
+    train_dup_share = float(h_train_all.duplicated(keep="first").mean())
+    limit = max(min_share, ratio * train_dup_share)
+    details = {"overlap_rows": n_overlap, "share_of_val": round(share, 4),
+               "train_internal_dup_share": round(train_dup_share, 4),
+               "limit": round(limit, 4)}
+    return share > limit, details
 
 
 def time_split_check(train: pd.DataFrame, val: pd.DataFrame, time_column: str | None):
