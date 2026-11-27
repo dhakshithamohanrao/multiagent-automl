@@ -23,7 +23,9 @@ from xgboost import XGBClassifier
 
 from src.evaluation.metrics import compute_metrics
 from src.utils.helpers import PROJECT_ROOT, load_config
+import warnings
 
+warnings.filterwarnings("ignore", message=".*sklearn.utils.parallel.delayed.*", category=UserWarning)
 optuna.logging.set_verbosity(optuna.logging.WARNING)
 
 MODEL_NAMES = ["logistic_regression", "random_forest", "xgboost", "lightgbm"]

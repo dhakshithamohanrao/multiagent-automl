@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
     rows = pd.read_csv(OUT).to_dict("records") if OUT.exists() else []
     done = {(r["dataset"], r["seed"]) for r in rows}
-    graph = build_graph(profiler_llm=False)
+    graph = build_graph(profiler_llm=False, use_lead=False)
 
     for name in names:
         for seed in seeds:

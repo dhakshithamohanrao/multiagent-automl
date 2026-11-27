@@ -19,5 +19,7 @@ class State(TypedDict, total=False):
     critic_flags: list
     loop_count: int
     decisions: list      # lead's decisions: action, columns, reason, source
+    extra_features: list  # recipes for added features: name, op, a, b
+    extra_trials: int     # extra Optuna trials requested by tune_more
     next_step: str
     report: str

@@ -19,13 +19,16 @@ log = logging.getLogger(__name__)
 def run_trainer(state: State, models: list | None = None, n_trials: int | None = None) -> State:
     cfg = load_config()
     names = models or cfg["models"]
-    n_trials = n_trials or cfg["optuna_trials"]
-    timeout_s = cfg["time_budget_s"] / len(names)     # equal share of the time budget per model
+    base_trials = n_trials or cfg["optuna_trials"]
+    n_trials = base_trials + state.get("extra_trials", 0)                      # tune_more adds trials
+    timeout_s = None                                  # trial count only, so runs are reproducible
+    if cfg.get("tuning_timeout", False):
+        timeout_s = cfg["time_budget_s"] / len(names) * (n_trials / base_trials)    
     seed = state.get("seed", 0)
     balance = state.get("balance", False)
 
     df = pd.read_csv(state["train_path"])
-    X, y = select_xy(df, state["features"], state["target"])
+    X, y = select_xy(df, state["features"], state["target"], state.get("extra_features"))
 
     trained, tuned = {}, {}
     for name in names:

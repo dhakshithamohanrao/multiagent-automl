@@ -17,7 +17,7 @@ def _clean(v):
 
 def run_evaluator(state: State) -> State:
     df = pd.read_csv(state["val_path"])
-    X, y = select_xy(df, state["features"], state["target"])
+    X, y = select_xy(df, state["features"], state["target"], state.get("extra_features"))
 
     results = {}
     for name, model in state["models"].items():

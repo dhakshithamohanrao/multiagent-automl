@@ -6,6 +6,7 @@ val_size: 0.25               # of the remaining data
 
 models: [logistic_regression, random_forest, xgboost, lightgbm]
 optuna_trials: 20
+tuning_timeout: false      # true also stops tuning by wall-clock time (not reproducible)
 
 limits:
   lead_max_decisions: 4
