@@ -69,3 +69,50 @@ def suspicious_names(columns, target: str | None = None):
         if hit:
             flagged[col] = hit
     return bool(flagged), flagged
+
+def duplicate_overlap(train: pd.DataFrame, val: pd.DataFrame, max_share: float = 0.0):
+    """Share of validation rows that also appear in train (hash of every row)."""
+    cols = [c for c in train.columns if c in val.columns]
+    if not cols or len(val) == 0:
+        return False, {}
+    h_train = set(pd.util.hash_pandas_object(train[cols], index=False))
+    h_val = pd.util.hash_pandas_object(val[cols], index=False)
+    n_overlap = int(h_val.isin(h_train).sum())
+    share = n_overlap / len(val)
+    details = {"overlap_rows": n_overlap, "share_of_val": round(float(share), 4)}
+    return share > max_share, details
+
+
+def time_split_check(train: pd.DataFrame, val: pd.DataFrame, time_column: str | None):
+    """When a date column exists, validation must be later than training."""
+    if not time_column or time_column not in train.columns or time_column not in val.columns:
+        return False, {}
+    t_train = pd.to_datetime(train[time_column], errors="coerce")
+    t_val = pd.to_datetime(val[time_column], errors="coerce")
+    if t_train.notna().sum() == 0 or t_val.notna().sum() == 0:
+        return False, {}
+    train_max, val_min = t_train.max(), t_val.min()
+    flag = bool(val_min < train_max)
+    return flag, {"train_max": str(train_max), "val_min": str(val_min)}
+
+
+def imbalance_check(y, rare_recall: float | None = None,
+                    rare_threshold: float = 0.10, recall_threshold: float = 0.30):
+    """Rare class under the threshold, and optionally a low recall on that class."""
+    y = np.asarray(y)
+    classes, counts = np.unique(y, return_counts=True)
+    ratio = float(counts.min() / counts.sum())
+    details = {"rare_class_ratio": round(ratio, 4)}
+    flag = ratio < rare_threshold
+    if rare_recall is not None:
+        details["rare_class_recall"] = round(float(rare_recall), 4)
+        flag = flag and rare_recall < recall_threshold
+    return bool(flag), details
+
+
+def overfit_gap_check(train_score: float, val_score: float, max_gap: float = 0.10):
+    """Training score minus validation score. A big gap means the model memorised."""
+    gap = float(train_score) - float(val_score)
+    return gap > max_gap, {"train": round(float(train_score), 4),
+                           "val": round(float(val_score), 4),
+                           "gap": round(gap, 4)}
