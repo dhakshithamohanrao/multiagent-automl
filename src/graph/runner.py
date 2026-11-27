@@ -5,7 +5,7 @@ from src.graph.workflow import RUN_CONFIG, build_graph
 from src.utils.cost_tracker import CostTracker
 from src.utils.data import ROOT, TARGET_COL
 from src.utils.seeds import set_seed
-
+from src.llm.client import get_stats, reset_stats
 PROFILER_USES_LLM = False   # set True if you want the LLM profiler summary in benchmark runs
 
 
@@ -24,6 +24,7 @@ def _initial_state(name: str, seed: int) -> dict:
 def run_agents_no_critic(name: str, seed: int) -> dict:
     """Run the agent team (lead on, critic off) on one dataset and seed."""
     tracker = CostTracker()
+    reset_stats()
     row = {"system": "agents_no_critic", "dataset": name, "seed": seed}
     try:
         set_seed(seed)
@@ -35,7 +36,6 @@ def run_agents_no_critic(name: str, seed: int) -> dict:
         val_auc = out["results"][best]["val_roc_auc"]
 
         def predict_fn(X_test):
-            # select_xy expects the target column to be present, so add a dummy one.
             df = X_test.copy()
             df[out["target"]] = 0
             X, _ = select_xy(df, out["features"], out["target"], out.get("extra_features"))
@@ -53,14 +53,17 @@ def run_agents_no_critic(name: str, seed: int) -> dict:
             test_balanced_accuracy=round(test["balanced_accuracy"], 4),
             test_rare_class_recall=round(test["rare_class_recall"], 4),
             lead_actions=[d["action"] for d in decisions],
+            lead_sources=[d.get("source") for d in decisions],
+            lead_fallbacks=sum(d.get("source") == "fallback" for d in decisions),
             dropped=out.get("dropped", {}),
         )
     except Exception as e:
         row.update(crashed=True, error=f"{type(e).__name__}: {e}")
 
+    s = get_stats()
+    tracker.llm_calls, tracker.tokens = s["calls"], s["tokens"]
     row.update(tracker.summary())
     return row
-
 
 if __name__ == "__main__":
     # Quick check on one dataset and one seed (does not save anything)

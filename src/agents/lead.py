@@ -76,7 +76,6 @@ def validate_decision(d, state: dict) -> dict:
         raise ValueError("class weights are already applied")
     return {"action": action, "columns": columns, "reason": reason}
 
-
 def _decide(summary: dict, state: dict):
     system = PROMPT_FILE.read_text(encoding="utf-8")
     prompt = "Current state summary (JSON):\n" + json.dumps(summary, indent=2)
@@ -86,13 +85,18 @@ def _decide(summary: dict, state: dict):
             prompt + f"\n\nYour previous answer was invalid ({error}). "
                      "Answer again with valid JSON only.")
         try:
-            return validate_decision(parse_decision(ask(p, system)), state), "llm"
-        except Exception as e:                           # bad JSON, bad action, API outage
+            text = ask(p, system)
+        except Exception as e:                           # API outage: client already retried
+            error = str(e)[:200]
+            log.warning("Lead API failure: %s", error)
+            break
+        try:
+            return validate_decision(parse_decision(text), state), "llm"
+        except Exception as e:                           # bad JSON or bad action
             error = str(e)[:200]
             log.warning("Lead answer rejected: %s", error)
     return {"action": "finish", "columns": [],
             "reason": f"fallback to finish: {error}"}, "fallback"
-
 
 def _log(state: dict, summary: dict, decision: dict, source: str) -> None:
     LOG_FILE.parent.mkdir(parents=True, exist_ok=True)

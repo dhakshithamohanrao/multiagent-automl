@@ -6,4 +6,4 @@ data/raw/
 data/planted_flaws/
 results/raw/
 *.pkl
-*.joblib
+*.joblibrun.log

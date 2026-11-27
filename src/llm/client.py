@@ -144,5 +144,5 @@ def ask(prompt: str, system: str = DEFAULT_SYSTEM) -> str:
                 _Retryable) as e:
             last_error = e
             if attempt < MAX_ATTEMPTS - 1:
-                time.sleep(5 * 2 ** attempt)   # wait 5 s, then 10 s
+                time.sleep(15 * 2 ** attempt)   # wait 5 s, then 10 s
     raise RuntimeError(f"LLM call failed after {MAX_ATTEMPTS} attempts: {last_error}")
