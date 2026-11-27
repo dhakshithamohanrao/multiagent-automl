@@ -18,5 +18,6 @@ class State(TypedDict, total=False):
     best_model: str
     critic_flags: list
     loop_count: int
+    decisions: list      # lead's decisions: action, columns, reason, source
     next_step: str
     report: str
