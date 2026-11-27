@@ -13,10 +13,12 @@ from src.baselines.flaml_run import run_flaml
 from src.utils.cost_tracker import CostTracker
 from src.utils.data import load_dataset, make_splits
 from src.utils.helpers import RESULTS_FILE, finished_run_ids, write_result
+from src.graph.runner import run_agents_no_critic
 
 SYSTEMS = {
     "plain_pipeline": run_plain_pipeline,  # reference only, not one of the 5 systems
     "flaml": run_flaml,
+    "agents_no_critic": run_agents_no_critic,  # system 4
 }
 
 
@@ -34,6 +36,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--set", default="dev", choices=["dev", "final"])
     parser.add_argument("--systems", nargs="+", default=list(SYSTEMS))
+    parser.add_argument("--limit", type=int, default=None, help="stop after this many NEW runs")
     args = parser.parse_args()
 
     with open(ROOT / "configs" / "experiment.yaml") as f:
@@ -44,12 +47,15 @@ def main() -> None:
     done = finished_run_ids()
     jobs = [(system, d["name"], seed)
             for d in datasets for seed in seeds for system in args.systems]
-
+    ran = 0
     for i, (system, name, seed) in enumerate(jobs, 1):
         run_id = f"{system}|{name}|{seed}|none"
         if run_id in done:
             print(f"[{i}/{len(jobs)}] skip (already done): {run_id}")
             continue
+        if args.limit is not None and ran >= args.limit:
+                break
+        ran += 1
 
         print(f"[{i}/{len(jobs)}] running: {run_id}")
         make_splits(load_dataset(name), name, seed)
