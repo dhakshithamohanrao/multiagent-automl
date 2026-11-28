@@ -19,8 +19,10 @@ def apply_action(state: dict) -> dict:
 
     if action == "drop_columns":
         dropped = dict(state.get("dropped", {}))
+        who = "critic" if decision.get("source") == "critic" else "lead"
+        reason = decision["reason"].removeprefix("critic: ")
         for col in decision["columns"]:
-            dropped[col] = f"dropped by lead: {decision['reason']}"
+            dropped[col] = f"dropped by {who}: {reason}"
         new["dropped"] = dropped
 
     elif action == "fix_imbalance":

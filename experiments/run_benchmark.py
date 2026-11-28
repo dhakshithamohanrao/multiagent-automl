@@ -7,20 +7,20 @@ sys.path.insert(0, str(ROOT))  # lets "src" be imported when run as a script
 
 import pandas as pd
 import yaml
+from src.graph.runner import run_agents_no_critic, run_agents_with_critic
 
 from src.baselines.fixed_pipeline import run_plain_pipeline
 from src.baselines.flaml_run import run_flaml
 from src.utils.cost_tracker import CostTracker
 from src.utils.data import load_dataset, make_splits
 from src.utils.helpers import RESULTS_FILE, finished_run_ids, write_result
-from src.graph.runner import run_agents_no_critic
 
 SYSTEMS = {
     "plain_pipeline": run_plain_pipeline,  # reference only, not one of the 5 systems
     "flaml": run_flaml,
     "agents_no_critic": run_agents_no_critic,  # system 4
+    "agents_with_critic": run_agents_with_critic,  # system 5
 }
-
 
 def export_table() -> None:
     """Copy all saved rows into a CSV table for the write-up."""
