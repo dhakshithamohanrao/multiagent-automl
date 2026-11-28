@@ -23,3 +23,8 @@ class State(TypedDict, total=False):
     extra_trials: int     # extra Optuna trials requested by tune_more
     next_step: str
     report: str
+    critic_flags: list
+    critic_verdict: dict
+    critic_loops: int
+    time_column: str
+    sensitive_column: str

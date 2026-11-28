@@ -26,7 +26,7 @@ def build_summary(state: dict, max_decisions: int) -> dict:
     top_unique = sorted(profile.get("unique_ratios", {}).items(), key=lambda kv: -kv[1])[:5]
     results = {name: {k: r.get(k) for k in SCORE_KEYS}
                for name, r in state.get("results", {}).items()}
-    return {
+    summary = {
         "n_rows": profile.get("n_rows"),
         "n_features_now": len(state.get("features", [])),
         "class_balance": profile.get("class_balance"),
@@ -42,6 +42,10 @@ def build_summary(state: dict, max_decisions: int) -> dict:
                                for d in state.get("decisions", [])],
         "decisions_left": max_decisions - state.get("loop_count", 0),
     }
+    if state.get("critic_flags"):          # only present in system 5, so system 4 prompts are unchanged
+        summary["critic_flags"] = [{"check": f["check"], "severity": f["severity"],
+                                    "details": f["details"]} for f in state["critic_flags"]]
+    return summary
 
 
 def parse_decision(text: str) -> dict:
