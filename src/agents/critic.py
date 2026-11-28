@@ -62,7 +62,7 @@ def run_checks(state: dict, cfg: dict) -> list:
     raw["single_feature_leakage"] = lc.single_feature_leakage(Xtr, ytr, cfg["leakage_auc"])
     raw["id_like_columns"] = lc.id_like_columns(Xtr, cfg["id_ratio"])
     raw["suspicious_names"] = lc.suspicious_names(list(Xtr.columns), target)
-    cols = list(state["features"]) + [target]
+    cols = [c for c in state["features"] if c in train.columns and c in val.columns] + [target]
     raw["duplicate_overlap"] = lc.duplicate_overlap(
         train[cols], val[cols], cfg["dup_min_share"], cfg["dup_ratio"])
     raw["time_split_check"] = lc.time_split_check(train, val, state.get("time_column"))
