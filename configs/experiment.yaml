@@ -13,11 +13,16 @@ limits:
   critic_max_sendbacks: 3
   code_max_retries: 2
 
-critic:                     # starting values, tuned on dev datasets in Phase 6
+critic:                     # tuned on dev datasets in Phase 6 (step 6.9)
   leakage_auc: 0.97
-  id_unique_ratio: 0.95
-  rare_class_ratio: 0.10
-  overfit_gap: 0.10
+  id_ratio: 0.95
+  dup_min_share: 0.05
+  dup_ratio: 1.5
+  rare_threshold: 0.10
+  recall_threshold: 0.30
+  overfit_gap: 0.30
+  fairness_gap: 0.20
+  max_sendbacks: 3
 
 llm:
   provider: gemini
