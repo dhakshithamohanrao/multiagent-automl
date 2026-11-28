@@ -28,3 +28,4 @@ class State(TypedDict, total=False):
     critic_loops: int
     time_column: str
     sensitive_column: str
+    explanation: dict
