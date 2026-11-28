@@ -79,6 +79,7 @@ def _run(system: str, name: str, seed: int, use_critic: bool) -> dict:
                 critic_source=(out.get("critic_verdict") or {}).get("source"),
             )
     except Exception as e:
+        import traceback; traceback.print_exc()
         row.update(crashed=True, error=f"{type(e).__name__}: {e}")
 
     s = get_stats()

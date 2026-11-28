@@ -98,7 +98,7 @@ def _decide(summary: dict, state: dict):
         except Exception as e:                           # bad JSON or bad action
             error = str(e)[:200]
             log.warning("Lead answer rejected: %s", error)
-        return {"action": "finish", "columns": [],
+    return {"action": "finish", "columns": [],
             "reason": "fallback to finish: LLM unavailable"}, "fallback"
 
 def _log(state: dict, summary: dict, decision: dict, source: str) -> None:
