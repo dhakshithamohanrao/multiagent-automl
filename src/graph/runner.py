@@ -10,8 +10,11 @@ from src.llm.client import get_stats, reset_stats
 from src.utils.cost_tracker import CostTracker
 from src.utils.data import ROOT, TARGET_COL
 from src.utils.seeds import set_seed
+from src.agents.explainer import run_explainer
+from src.agents.reporter import run_reporter
 
-PROFILER_USES_LLM = False   # set True if you want the LLM profiler summary in benchmark runs
+PROFILER_USES_LLM = False 
+EXPLAINER_USES_LLM = False   # template explanation until the LLM quota is sorted out  # set True if you want the LLM profiler summary in benchmark runs
 
 
 def _initial_state(name: str, seed: int) -> dict:
@@ -46,6 +49,13 @@ def _run(system: str, name: str, seed: int, use_critic: bool) -> dict:
             return model.predict_proba(X)[:, 1]
 
         test = score_on_test(name, seed, predict_fn)
+
+        out["test_score"] = round(test["roc_auc"], 4)
+        out = run_explainer(out, use_llm=EXPLAINER_USES_LLM)
+        out = run_reporter(out)
+        report_dir = ROOT / "results" / "raw" / "reports"
+        report_dir.mkdir(parents=True, exist_ok=True)
+        (report_dir / f"{system}_{name}_seed{seed}.md").write_text(out["report"], encoding="utf-8")
 
         decisions = out.get("decisions", [])
         row.update(

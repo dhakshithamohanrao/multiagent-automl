@@ -47,7 +47,6 @@ def build_summary(state: dict, max_decisions: int) -> dict:
                                     "details": f["details"]} for f in state["critic_flags"]]
     return summary
 
-
 def parse_decision(text: str) -> dict:
     """Pull the JSON object out of the LLM text (tolerates markdown fences)."""
     start, end = text.find("{"), text.rfind("}")
@@ -99,8 +98,8 @@ def _decide(summary: dict, state: dict):
         except Exception as e:                           # bad JSON or bad action
             error = str(e)[:200]
             log.warning("Lead answer rejected: %s", error)
-    return {"action": "finish", "columns": [],
-            "reason": f"fallback to finish: {error}"}, "fallback"
+        return {"action": "finish", "columns": [],
+            "reason": "fallback to finish: LLM unavailable"}, "fallback"
 
 def _log(state: dict, summary: dict, decision: dict, source: str) -> None:
     LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
